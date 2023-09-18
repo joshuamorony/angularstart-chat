@@ -6,4 +6,7 @@ export const environment = {
     apiKey: 'AIzaSyAmGGkG67K2cZ2H288DWQ46f5TIdIl3vs8',
     authDomain: 'angularstart-chat.firebaseapp.com',
     messagingSenderId: '767794269558',
-  },};
+  },
+  production: true,
+  useEmulators: false,
+};
