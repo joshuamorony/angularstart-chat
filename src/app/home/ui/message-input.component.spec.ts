@@ -33,7 +33,7 @@ describe('MessageInputComponent', () => {
       const testValue = 'hello';
       component.messageControl.setValue(testValue);
 
-      const submit = fixture.debugElement.query(By.css('input[type="submit"]'));
+      const submit = fixture.debugElement.query(By.css('button'));
       submit.nativeElement.click();
 
       expect(observerSpy.getLastValue()).toEqual(testValue);
