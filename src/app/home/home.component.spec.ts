@@ -43,9 +43,7 @@ describe('HomeComponent', () => {
     let messageInput: DebugElement;
 
     beforeEach(() => {
-      const messageInput = fixture.debugElement.query(
-        By.css('app-message-input')
-      );
+      messageInput = fixture.debugElement.query(By.css('app-message-input'));
     });
 
     describe('output: send', () => {
