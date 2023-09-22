@@ -38,5 +38,14 @@ describe('MessageInputComponent', () => {
 
       expect(observerSpy.getLastValue()).toEqual(testValue);
     });
+
+    it('should clear form control when submitted', () => {
+      component.messageControl.setValue('hello');
+
+      const submit = fixture.debugElement.query(By.css('button'));
+      submit.nativeElement.click();
+
+      expect(component.messageControl.value).toEqual('');
+    });
   });
 });
