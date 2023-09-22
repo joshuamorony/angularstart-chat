@@ -45,7 +45,7 @@ describe('MessageInputComponent', () => {
       const submit = fixture.debugElement.query(By.css('button'));
       submit.nativeElement.click();
 
-      expect(component.messageControl.value).toEqual('');
+      expect(component.messageControl.value).toEqual(null);
     });
   });
 });

@@ -6,7 +6,9 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
   selector: 'app-message-input',
   template: `
     <input type="text" [formControl]="messageControl" />
-    <button (click)="send.emit(messageControl.value)">Send</button>
+    <button (click)="send.emit(messageControl.value); messageControl.reset()">
+      Send
+    </button>
   `,
   imports: [ReactiveFormsModule],
 })
