@@ -1,10 +1,14 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   standalone: true,
   selector: 'app-message-input',
-  template: ` <p>Hello world</p> `,
+  template: `
+    <input type="text" [formControl]="messageControl" />
+    <button (click)="send.emit(messageControl.value)">Send</button>
+  `,
+  imports: [ReactiveFormsModule],
 })
 export class MessageInputComponent {
   @Output() send = new EventEmitter<string>();
