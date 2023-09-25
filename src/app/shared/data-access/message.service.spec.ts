@@ -17,13 +17,21 @@ describe('MessageService', () => {
   });
 
   describe('source: add$', () => {
+    beforeEach(() => {
+      Date.now = jest.fn(() => 1);
+    });
+
     it('should cause the message to be added to the messages state', () => {
-      const testMessage = { content: 'hello' } as any;
+      const testMessage = 'hello';
       service.add$.next(testMessage);
 
       const messages = service.messages();
 
-      expect(messages[messages.length - 1]).toEqual(testMessage);
+      expect(messages[messages.length - 1]).toEqual({
+        author: '',
+        content: testMessage,
+        created: Date.now().toString(),
+      });
     });
   });
 });
