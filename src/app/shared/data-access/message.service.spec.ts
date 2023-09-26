@@ -1,31 +1,36 @@
 import { TestBed } from '@angular/core/testing';
 import { MessageService } from './message.service';
-import { Firestore, collection, addDoc } from '@angular/fire/firestore';
-
-const mockCollectionReference = jest.fn();
-const mockCollection = jest
-  .fn()
-  .mockReturnValue(mockCollectionReference as any);
-const mockAddDoc = jest.fn();
-
-jest.mock('@angular/fire/firestore', () => ({
-  collection: mockCollection,
-  addDoc: mockAddDoc,
-}));
+import { Firestore } from '@angular/fire/firestore';
+import { FirebaseFunctions } from '../utils/firebase-functions';
 
 describe('MessageService', () => {
   let service: MessageService;
+
+  const mockCollectionReference = jest.fn();
+  const mockCollection = jest
+    .fn()
+    .mockReturnValue(mockCollectionReference as any);
+  const mockAddDoc = jest.fn();
 
   const testUser = {
     email: '',
   };
 
   beforeEach(() => {
-    jest.restoreAllMocks();
-    jest.clearAllMocks();
-
     TestBed.configureTestingModule({
-      providers: [{ provide: Firestore, useValue: {} }],
+      providers: [
+        { provide: Firestore, useValue: {} },
+        {
+          provide: FirebaseFunctions,
+          useValue: {
+            collection: mockCollection,
+            addDoc: mockAddDoc,
+            orderBy: jest.fn(),
+            limit: jest.fn(),
+            query: jest.fn(),
+          },
+        },
+      ],
     });
 
     service = TestBed.inject(MessageService);
@@ -40,7 +45,7 @@ describe('MessageService', () => {
       Date.now = jest.fn(() => 1);
     });
 
-    it('should create a new document in the messages collection using the supplied message and authenticated user as author', () => {
+    it('should create a new document in the messages collection using the supplied message and authenticated user as author', async () => {
       const testMessage = {
         author: '',
         content: 'test',
