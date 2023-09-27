@@ -24,6 +24,7 @@ export class MessageService {
   private firestore = inject(Firestore);
 
   // sources
+  messages$ = this.getMessages();
   add$ = new Subject<Message['content']>();
 
   // state
@@ -36,6 +37,13 @@ export class MessageService {
 
   constructor() {
     // reducers
+    this.messages$.pipe(takeUntilDestroyed()).subscribe((messages) =>
+      this.state.update((state) => ({
+        ...state,
+        messages,
+      }))
+    );
+
     this.add$
       .pipe(
         takeUntilDestroyed(),
