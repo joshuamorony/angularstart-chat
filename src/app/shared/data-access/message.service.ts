@@ -3,8 +3,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, defer, exhaustMap, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Message } from '../interfaces/message';
-import { Firestore } from '@angular/fire/firestore';
-import { FirebaseFunctions } from '../utils/firebase-functions';
+import {
+  Firestore,
+  addDoc,
+  collection,
+  collectionData,
+  limit,
+  orderBy,
+  query,
+} from '@angular/fire/firestore';
 
 interface MessageState {
   messages: Message[];
@@ -15,7 +22,6 @@ interface MessageState {
 })
 export class MessageService {
   private firestore = inject(Firestore);
-  private ff = inject(FirebaseFunctions);
 
   // sources
   add$ = new Subject<Message['content']>();
@@ -39,17 +45,15 @@ export class MessageService {
   }
 
   private getMessages() {
-    const messagesCollection = this.ff.query(
-      this.ff.collection(this.firestore, 'messages'),
-      this.ff.orderBy('created', 'desc'),
-      this.ff.limit(50)
+    const messagesCollection = query(
+      collection(this.firestore, 'messages'),
+      orderBy('created', 'desc'),
+      limit(50)
     );
 
-    return this.ff
-      .collectionData(messagesCollection, { idField: 'id' })
-      .pipe(map((messages) => [...messages].reverse())) as Observable<
-      Message[]
-    >;
+    return collectionData(messagesCollection, { idField: 'id' }).pipe(
+      map((messages) => [...messages].reverse())
+    ) as Observable<Message[]>;
   }
 
   private addMessage(message: string) {
@@ -59,7 +63,7 @@ export class MessageService {
       created: Date.now().toString(),
     };
 
-    const messagesCollection = this.ff.collection(this.firestore, 'messages');
-    return defer(() => from(this.ff.addDoc(messagesCollection, newMessage)));
+    const messagesCollection = collection(this.firestore, 'messages');
+    return defer(() => from(addDoc(messagesCollection, newMessage)));
   }
 }
