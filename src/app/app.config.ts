@@ -1,42 +1,50 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
-import { provideRouter } from '@angular/router';
-import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { provideAuth, getAuth, connectAuthEmulator } from '@angular/fire/auth';
 import {
-  provideFirestore,
-  getFirestore,
-  initializeFirestore,
+  ApplicationConfig,
+  InjectionToken,
+  importProvidersFrom,
+} from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { initializeApp } from 'firebase/app';
+import {
   Firestore,
+  initializeFirestore,
   connectFirestoreEmulator,
-} from '@angular/fire/firestore';
+  getFirestore,
+} from 'firebase/firestore';
+import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { environment } from '../environments/environment';
 
 import { routes } from './app.routes';
 
+const app = initializeApp(environment.firebase);
+
+export const AUTH = new InjectionToken('Firebase auth', {
+  providedIn: 'root',
+  factory: () => {
+    const auth = getAuth();
+    if (environment.useEmulators) {
+      connectAuthEmulator(auth, 'http://localhost:9099', {
+        disableWarnings: true,
+      });
+    }
+    return auth;
+  },
+});
+
+export const FIRESTORE = new InjectionToken('Firebase firestore', {
+  providedIn: 'root',
+  factory: () => {
+    let firestore: Firestore;
+    if (environment.useEmulators) {
+      firestore = initializeFirestore(app, {});
+      connectFirestoreEmulator(firestore, 'localhost', 8080);
+    } else {
+      firestore = getFirestore();
+    }
+    return firestore;
+  },
+});
+
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideRouter(routes),
-    importProvidersFrom([
-      provideFirebaseApp(() => initializeApp(environment.firebase)),
-      provideAuth(() => {
-        const auth = getAuth();
-        if (environment.useEmulators) {
-          connectAuthEmulator(auth, 'http://localhost:9099', {
-            disableWarnings: true,
-          });
-        }
-        return auth;
-      }),
-      provideFirestore(() => {
-        let firestore: Firestore;
-        if (environment.useEmulators) {
-          firestore = initializeFirestore(getApp(), {});
-          connectFirestoreEmulator(firestore, 'localhost', 8080);
-        } else {
-          firestore = getFirestore();
-        }
-        return firestore;
-      }),
-    ]),
-  ],
+  providers: [provideRouter(routes)],
 };

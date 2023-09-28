@@ -1,17 +1,12 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, Subject, defer, exhaustMap, from } from 'rxjs';
+import { collection, query, orderBy, limit, addDoc } from 'firebase/firestore';
+import { collectionData } from 'rxfire/firestore';
 import { map } from 'rxjs/operators';
+
+import { FIRESTORE } from 'src/app/app.config';
 import { Message } from '../interfaces/message';
-import {
-  Firestore,
-  addDoc,
-  collection,
-  collectionData,
-  limit,
-  orderBy,
-  query,
-} from '@angular/fire/firestore';
 
 interface MessageState {
   messages: Message[];
@@ -21,7 +16,7 @@ interface MessageState {
   providedIn: 'root',
 })
 export class MessageService {
-  private firestore = inject(Firestore);
+  private firestore = inject(FIRESTORE);
 
   // sources
   messages$ = this.getMessages();
