@@ -9,6 +9,8 @@ describe('HomeComponent', () => {
   let fixture: ComponentFixture<HomeComponent>;
   let messageService: MessageService;
 
+  const mockMessages = [{}, {}];
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HomeComponent],
@@ -19,6 +21,7 @@ describe('HomeComponent', () => {
             add$: {
               next: jest.fn(),
             },
+            messages: jest.fn().mockReturnValue(mockMessages),
           },
         },
       ],
@@ -37,6 +40,18 @@ describe('HomeComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  describe('app-message-list', () => {
+    let messageList: DebugElement;
+
+    beforeEach(() => {
+      messageList = fixture.debugElement.query(By.css('app-message-list'));
+    });
+
+    it('should use messages selector as input', () => {
+      expect(messageList.componentInstance.messages).toEqual(mockMessages);
+    });
   });
 
   describe('app-message-input', () => {
