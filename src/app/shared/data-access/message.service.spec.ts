@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { MessageService } from './message.service';
-import { Firestore } from '@angular/fire/firestore';
 
 xdescribe('MessageService', () => {
   let service: MessageService;
@@ -17,7 +16,7 @@ xdescribe('MessageService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [{ provide: Firestore, useValue: {} }],
+      providers: [],
     });
 
     service = TestBed.inject(MessageService);
