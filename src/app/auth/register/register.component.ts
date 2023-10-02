@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { RegisterFormComponent } from './ui/register-form.component';
 
 @Component({
   standalone: true,
   selector: 'app-register',
-  template: ` <p>Hello world</p> `,
+  template: ` <app-register-form /> `,
+  imports: [RegisterFormComponent],
 })
 export class RegisterComponent { }
