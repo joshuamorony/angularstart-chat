@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
+import { passwordMatchesValidator } from '../utils/password-matches';
 
 @Component({
   standalone: true,
@@ -41,9 +42,15 @@ export class RegisterFormComponent {
 
   private fb = inject(FormBuilder);
 
-  registerForm = this.fb.nonNullable.group({
-    email: ['', [Validators.email, Validators.required]],
-    password: ['', [Validators.minLength(8), Validators.required]],
-    confirmPassword: ['', [Validators.required]],
-  });
+  registerForm = this.fb.nonNullable.group(
+    {
+      email: ['', [Validators.email, Validators.required]],
+      password: ['', [Validators.minLength(8), Validators.required]],
+      confirmPassword: ['', [Validators.required]],
+    },
+    {
+      updateOn: 'blur',
+      validators: [passwordMatchesValidator],
+    }
+  );
 }
