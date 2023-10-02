@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
 import { passwordMatchesValidator } from '../utils/password-matches';
+import { RegisterStatus } from '../data-access/register.service';
 
 @Component({
   standalone: true,
@@ -31,13 +32,19 @@ import { passwordMatchesValidator } from '../utils/password-matches';
       @if( (registerForm.controls.confirmPassword.dirty || form.submitted) &&
       registerForm.hasError('passwordMatch') ){
       <p>Must match password field</p>
-      }
-      <button type="submit">Submit</button>
+      } @switch (status){ @case ('error'){
+
+      <p>Could not create account with those details.</p>
+      } @case('creating'){
+      <p>Creating...</p>
+      } }
+      <button type="submit" [disabled]="status === 'creating'">Submit</button>
     </form>
   `,
   imports: [ReactiveFormsModule],
 })
 export class RegisterFormComponent {
+  @Input({ required: true }) status!: RegisterStatus;
   @Output() register = new EventEmitter<Credentials>();
 
   private fb = inject(FormBuilder);
