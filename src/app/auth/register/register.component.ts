@@ -7,7 +7,7 @@ import { RegisterService } from './data-access/register.service';
   selector: 'app-register',
   template: `
     <app-register-form
-      status="pending"
+      [status]="registerService.status()"
       (register)="registerService.$createUser.next($event)"
     />
   `,
