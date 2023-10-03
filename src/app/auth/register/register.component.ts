@@ -8,7 +8,7 @@ import { RegisterService } from './data-access/register.service';
   template: `
     <app-register-form
       [status]="registerService.status()"
-      (register)="registerService.$createUser.next($event)"
+      (register)="registerService.createUser$.next($event)"
     />
   `,
   providers: [RegisterService],
