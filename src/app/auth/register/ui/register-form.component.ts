@@ -8,7 +8,7 @@ import { RegisterStatus } from '../data-access/register.service';
   standalone: true,
   selector: 'app-register-form',
   template: `
-    <form [formGroup]="registerForm" #form="ngForm">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" #form="ngForm">
       <input formControlName="email" type="email" placeholder="email" />
       @if( (registerForm.controls.email.dirty || form.submitted) &&
       !registerForm.controls.email.valid ) {
@@ -60,4 +60,12 @@ export class RegisterFormComponent {
       validators: [passwordMatchesValidator],
     }
   );
+
+  onSubmit() {
+    if (this.registerForm.valid) {
+      const { confirmPassword, ...credentials } =
+        this.registerForm.getRawValue();
+      this.register.emit(credentials);
+    }
+  }
 }
