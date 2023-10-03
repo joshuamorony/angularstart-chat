@@ -1,10 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RegisterFormComponent } from './ui/register-form.component';
+import { RegisterService } from './data-access/register.service';
 
 @Component({
   standalone: true,
   selector: 'app-register',
-  template: ` <app-register-form status="pending" /> `,
+  template: `
+    <app-register-form
+      status="pending"
+      (register)="registerService.$createUser.next($event)"
+    />
+  `,
+  providers: [RegisterService],
   imports: [RegisterFormComponent],
 })
-export class RegisterComponent {}
+export class RegisterComponent {
+  public registerService = inject(RegisterService);
+}
