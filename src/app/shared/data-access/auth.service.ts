@@ -14,7 +14,7 @@ interface AuthState {
   providedIn: 'root',
 })
 export class AuthService {
-  auth = inject(AUTH);
+  private auth = inject(AUTH);
 
   // sources
   private user$ = authState(this.auth);
