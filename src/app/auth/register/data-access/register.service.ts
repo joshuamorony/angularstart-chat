@@ -1,5 +1,7 @@
-import { Injectable, computed, signal } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EMPTY, Subject, catchError, switchMap } from 'rxjs';
+import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
 
 export type RegisterStatus = 'pending' | 'creating' | 'success' | 'error';
@@ -10,8 +12,22 @@ interface RegisterState {
 
 @Injectable()
 export class RegisterService {
+  private authService = inject(AuthService);
+
   // sources
-  $createUser = new Subject<Credentials>();
+  error$ = new Subject<any>();
+  createUser$ = new Subject<Credentials>();
+
+  userCreated$ = this.createUser$.pipe(
+    switchMap((credentials) =>
+      this.authService.createAccount(credentials).pipe(
+        catchError((err) => {
+          this.error$.next(err);
+          return EMPTY;
+        })
+      )
+    )
+  );
 
   // state
   private state = signal<RegisterState>({
@@ -20,4 +36,25 @@ export class RegisterService {
 
   // selectors
   status = computed(() => this.state().status);
+
+  constructor() {
+    // reducers
+    this.userCreated$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() =>
+        this.state.update((state) => ({ ...state, status: 'success' }))
+      );
+
+    this.createUser$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() =>
+        this.state.update((state) => ({ ...state, status: 'creating' }))
+      );
+
+    this.error$
+      .pipe(takeUntilDestroyed())
+      .subscribe(() =>
+        this.state.update((state) => ({ ...state, status: 'error' }))
+      );
+  }
 }
