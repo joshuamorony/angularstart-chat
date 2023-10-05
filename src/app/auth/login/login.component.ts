@@ -7,7 +7,10 @@ import { LoginService } from './data-access/login.service';
   standalone: true,
   selector: 'app-login',
   template: `
-    <app-login-form [loginStatus]="loginService.status()" />
+    <app-login-form
+      [loginStatus]="loginService.status()"
+      (login)="loginService.login$.next($event)"
+    />
     <a routerLink="/auth/register">Create account</a>
   `,
   providers: [LoginService],
