@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { Message } from 'src/app/shared/interfaces/message';
 
@@ -16,7 +15,6 @@ import { Message } from 'src/app/shared/interfaces/message';
       }
     </ul>
   `,
-  imports: [CommonModule],
 })
 export class MessageListComponent {
   @Input({ required: true }) messages!: Message[];
