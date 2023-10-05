@@ -1,6 +1,10 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { from, defer } from 'rxjs';
-import { User, createUserWithEmailAndPassword } from 'firebase/auth';
+import {
+  User,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { authState } from 'rxfire/auth';
 import { Credentials } from '../interfaces/credentials';
 import { AUTH } from 'src/app/app.config';
@@ -31,6 +35,18 @@ export class AuthService {
     this.user$
       .pipe(takeUntilDestroyed())
       .subscribe((user) => this.state.update((state) => ({ ...state, user })));
+  }
+
+  login(credentials: Credentials) {
+    return from(
+      defer(() =>
+        signInWithEmailAndPassword(
+          this.auth,
+          credentials.email,
+          credentials.password
+        )
+      )
+    );
   }
 
   createAccount(credentials: Credentials) {
