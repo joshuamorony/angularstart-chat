@@ -1,9 +1,10 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { from, defer } from 'rxjs';
+import { from, defer, Subject } from 'rxjs';
 import {
   User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 import { authState } from 'rxfire/auth';
 import { Credentials } from '../interfaces/credentials';
@@ -47,6 +48,10 @@ export class AuthService {
         )
       )
     );
+  }
+
+  logout() {
+    signOut(this.auth);
   }
 
   createAccount(credentials: Credentials) {
