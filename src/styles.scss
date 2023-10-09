@@ -47,6 +47,8 @@ $primary-lighter: mat.get-color-from-palette(
 $primary-darker: mat.get-color-from-palette($angularstart-chat-primary, darker);
 
 $accent: mat.get-color-from-palette($angularstart-chat-accent, A200);
+$accent-lighter: mat.get-color-from-palette($angularstart-chat-accent, lighter);
+$accent-darker: mat.get-color-from-palette($angularstart-chat-accent, darker);
 
 :root {
   // theme
@@ -54,9 +56,8 @@ $accent: mat.get-color-from-palette($angularstart-chat-accent, A200);
   --primary-lighter-color: #{$primary-lighter};
   --primary-darker-color: #{$primary-darker};
   --accent-color: #{$accent};
-
-  // custom
-  --dark: #26221e;
+  --accent-lighter-color: #{$accent-lighter};
+  --accent-darker-color: #{$accent-darker};
 }
 
 html,

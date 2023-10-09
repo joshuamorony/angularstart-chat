@@ -18,6 +18,14 @@ import { AuthService } from 'src/app/shared/data-access/auth.service';
   `,
   providers: [LoginService],
   imports: [RouterModule, LoginFormComponent],
+  styles: [
+    `
+      a {
+        margin: 2rem;
+        color: var(--accent-darker-color);
+      }
+    `,
+  ],
 })
 export class LoginComponent {
   public loginService = inject(LoginService);
