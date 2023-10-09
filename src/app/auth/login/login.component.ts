@@ -3,21 +3,26 @@ import { Router, RouterModule } from '@angular/router';
 import { LoginFormComponent } from './ui/login-form.component';
 import { LoginService } from './data-access/login.service';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   standalone: true,
   selector: 'app-login',
   template: `
     <div class="container gradient-bg">
+      @if(authService.checkedInitAuth()){ @defer (on timer(200)) {
       <app-login-form
         [loginStatus]="loginService.status()"
         (login)="loginService.login$.next($event)"
       />
       <a routerLink="/auth/register">Create account</a>
+      } } @else {
+      <mat-spinner diameter="50" />
+      }
     </div>
   `,
   providers: [LoginService],
-  imports: [RouterModule, LoginFormComponent],
+  imports: [RouterModule, LoginFormComponent, MatProgressSpinnerModule],
   styles: [
     `
       a {
@@ -29,7 +34,7 @@ import { AuthService } from 'src/app/shared/data-access/auth.service';
 })
 export class LoginComponent {
   public loginService = inject(LoginService);
-  private authService = inject(AuthService);
+  public authService = inject(AuthService);
   private router = inject(Router);
 
   constructor() {

@@ -23,6 +23,7 @@ export class MessageService {
 
   // sources
   messages$ = this.getMessages().pipe(
+    // restart stream when user reauthenticates
     retry({
       delay: () => this.authUser$.pipe(filter((user) => !!user)),
     })

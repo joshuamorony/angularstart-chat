@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { from, defer, Subject } from 'rxjs';
+import { from, defer, Subject, tap } from 'rxjs';
 import {
   User,
   createUserWithEmailAndPassword,
@@ -13,6 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface AuthState {
   user: User | null;
+  checkedInitAuth: boolean;
 }
 
 @Injectable({
@@ -27,15 +28,21 @@ export class AuthService {
   // state
   private state = signal<AuthState>({
     user: null,
+    checkedInitAuth: false,
   });
 
   // selectors
   user = computed(() => this.state().user);
+  checkedInitAuth = computed(() => this.state().checkedInitAuth);
 
   constructor() {
-    this.user$
-      .pipe(takeUntilDestroyed())
-      .subscribe((user) => this.state.update((state) => ({ ...state, user })));
+    this.user$.pipe(takeUntilDestroyed()).subscribe((user) =>
+      this.state.update((state) => ({
+        ...state,
+        user,
+        checkedInitAuth: true,
+      }))
+    );
   }
 
   login(credentials: Credentials) {
