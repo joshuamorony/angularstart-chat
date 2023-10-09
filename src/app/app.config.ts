@@ -15,6 +15,7 @@ import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { environment } from '../environments/environment';
 
 import { routes } from './app.routes';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 const app = initializeApp(environment.firebase);
 
@@ -46,5 +47,5 @@ export const FIRESTORE = new InjectionToken('Firebase firestore', {
 });
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes)],
+  providers: [provideRouter(routes), provideAnimations()],
 };
