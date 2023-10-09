@@ -1,1 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --color-dark: #211e1a;
+}
+
+.header {
+  box-shadow: 0px -7px 11px 0px var(--color-dark);
+}
+
+form {
+  input {
+    padding: 1rem;
+  }
+}
+
+@keyframes animateInPrimary {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes animateInSecondary {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-in-primary {
+  animation: animateInPrimary;
+  animation: animateInPrimary;
+  animation-duration: 750ms;
+}
+
+.animate-in-secondary {
+  animation: animateInSecondary ease-in 1;
+  animation: animateInSecondary ease-in 1;
+  animation-duration: 750ms;
+}
