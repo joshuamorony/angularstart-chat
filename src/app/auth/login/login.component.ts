@@ -8,11 +8,13 @@ import { AuthService } from 'src/app/shared/data-access/auth.service';
   standalone: true,
   selector: 'app-login',
   template: `
-    <app-login-form
-      [loginStatus]="loginService.status()"
-      (login)="loginService.login$.next($event)"
-    />
-    <a routerLink="/auth/register">Create account</a>
+    <div class="container gradient-bg">
+      <app-login-form
+        [loginStatus]="loginService.status()"
+        (login)="loginService.login$.next($event)"
+      />
+      <a routerLink="/auth/register">Create account</a>
+    </div>
   `,
   providers: [LoginService],
   imports: [RouterModule, LoginFormComponent],

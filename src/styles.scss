@@ -13,14 +13,14 @@
 // hue. Available color palettes: https://material.io/design/color/
 $angularstart-chat-primary: mat.define-palette(mat.$orange-palette);
 $angularstart-chat-accent: mat.define-palette(
-  mat.$yellow-palette,
-  A200,
-  A100,
-  A400
+  mat.$blue-gray-palette,
+  700,
+  800,
+  900
 );
 
 // The warn palette is optional (defaults to red).
-$angularstart-chat-warn: mat.define-palette(mat.$deep-orange-palette);
+$angularstart-chat-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object. A theme consists of configurations for individual
 // theming systems such as "color" or "typography".
@@ -68,14 +68,24 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.header {
-  box-shadow: 0px -7px 11px 0px var(--dark);
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-form {
-  input {
-    padding: 1rem;
-  }
+.gradient-bg {
+  background: linear-gradient(
+    138deg,
+    var(--primary-darker-color) 0%,
+    var(--primary-color) 100%
+  );
+}
+
+.header {
+  box-shadow: 0px -7px 11px 0px var(--dark);
 }
 
 @keyframes animateInPrimary {
