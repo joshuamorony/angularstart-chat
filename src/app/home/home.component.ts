@@ -12,14 +12,17 @@ import { Router } from '@angular/router';
   standalone: true,
   selector: 'app-home',
   template: `
-    <div class="container gradient-bg">
-      <mat-toolbar>
+    <div class="container">
+      <mat-toolbar color="primary">
+        <span class="spacer"></span>
         <button mat-icon-button (click)="authService.logout()">
           <mat-icon>logout</mat-icon>
         </button>
-        <span>Chat</span>
       </mat-toolbar>
-      <app-message-list [messages]="messageService.messages()" />
+      <app-message-list
+        [messages]="messageService.messages()"
+        [activeUser]="authService.user()"
+      />
       <app-message-input (send)="messageService.add$.next($event)" />
     </div>
   `,
@@ -39,10 +42,13 @@ import { Router } from '@angular/router';
         height: 100%;
       }
 
+      mat-toolbar {
+        box-shadow: 0px -7px 11px 0px var(--accent-color);
+      }
+
       app-message-list {
         height: 100%;
         width: 100%;
-        padding-bottom: 5rem;
       }
 
       app-message-input {
