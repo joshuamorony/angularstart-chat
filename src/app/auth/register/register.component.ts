@@ -7,10 +7,12 @@ import { Router, RouterModule } from '@angular/router';
   standalone: true,
   selector: 'app-register',
   template: `
-    <app-register-form
-      [status]="registerService.status()"
-      (register)="registerService.createUser$.next($event)"
-    />
+    <div class="container gradient-bg">
+      <app-register-form
+        [status]="registerService.status()"
+        (register)="registerService.createUser$.next($event)"
+      />
+    </div>
   `,
   providers: [RegisterService],
   imports: [RegisterFormComponent],
