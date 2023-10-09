@@ -3,7 +3,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, Subject, defer, exhaustMap, from } from 'rxjs';
 import { collection, query, orderBy, limit, addDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
-import { catchError, filter, map } from 'rxjs/operators';
+import { catchError, filter, map, retry } from 'rxjs/operators';
 
 import { FIRESTORE } from 'src/app/app.config';
 import { Message } from '../interfaces/message';
@@ -19,11 +19,16 @@ interface MessageState {
 export class MessageService {
   private firestore = inject(FIRESTORE);
   private authService = inject(AuthService);
+  private authUser$ = toObservable(this.authService.user);
 
   // sources
-  messages$ = this.getMessages();
+  messages$ = this.getMessages().pipe(
+    retry({
+      delay: () => this.authUser$.pipe(filter((user) => !!user)),
+    })
+  );
   add$ = new Subject<Message['content']>();
-  logout$ = toObservable(this.authService.user).pipe(filter((user) => !user));
+  logout$ = this.authUser$.pipe(filter((user) => !user));
 
   // state
   private state = signal<MessageState>({
