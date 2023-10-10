@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { User } from 'firebase/auth';
+import { Component, Input, ViewChild, effect, signal } from '@angular/core';
+import { CdkScrollable, ScrollingModule } from '@angular/cdk/scrolling';
 import { AuthUser } from 'src/app/shared/data-access/auth.service';
 import { Message } from 'src/app/shared/interfaces/message';
 
@@ -8,8 +8,8 @@ import { Message } from 'src/app/shared/interfaces/message';
   standalone: true,
   selector: 'app-message-list',
   template: `
-    <ul class="gradient-bg">
-      @for (message of messages; track (message.created + message.author)){
+    <ul cdkScrollable class="gradient-bg">
+      @for (message of messagesSignal(); track message.created){
       <li
         [ngStyle]="{
           'flex-direction':
@@ -36,6 +36,8 @@ import { Message } from 'src/app/shared/interfaces/message';
   styles: [
     `
       ul {
+        height: 100%;
+        overflow: scroll;
         list-style-type: none;
         padding: 1rem;
         padding-bottom: 5rem;
@@ -63,9 +65,25 @@ import { Message } from 'src/app/shared/interfaces/message';
       }
     `,
   ],
-  imports: [CommonModule],
+  imports: [CommonModule, ScrollingModule],
 })
 export class MessageListComponent {
-  @Input({ required: true }) messages!: Message[];
+  messagesSignal = signal<Message[]>([]);
+
+  @Input({ required: true }) set messages(value: Message[]) {
+    this.messagesSignal.set(value);
+  }
   @Input({ required: true }) activeUser!: AuthUser;
+  @ViewChild(CdkScrollable) scrollContainer!: CdkScrollable;
+
+  constructor() {
+    effect(() => {
+      if (this.messagesSignal().length && this.scrollContainer) {
+        this.scrollContainer.scrollTo({
+          bottom: 0,
+          behavior: 'smooth',
+        });
+      }
+    });
+  }
 }
