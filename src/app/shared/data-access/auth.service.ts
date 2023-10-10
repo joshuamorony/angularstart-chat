@@ -39,7 +39,6 @@ export class AuthService {
       this.state.update((state) => ({
         ...state,
         user,
-        checkedInitAuth: true,
       }))
     );
   }

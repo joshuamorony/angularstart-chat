@@ -1,8 +1,4 @@
-import {
-  ApplicationConfig,
-  InjectionToken,
-  importProvidersFrom,
-} from '@angular/core';
+import { ApplicationConfig, InjectionToken } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { initializeApp } from 'firebase/app';
 import {
