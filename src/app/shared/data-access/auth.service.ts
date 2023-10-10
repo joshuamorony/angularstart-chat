@@ -11,9 +11,10 @@ import { Credentials } from '../interfaces/credentials';
 import { AUTH } from 'src/app/app.config';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
+export type AuthUser = User | null | undefined;
+
 interface AuthState {
-  user: User | null;
-  checkedInitAuth: boolean;
+  user: AuthUser;
 }
 
 @Injectable({
@@ -27,13 +28,11 @@ export class AuthService {
 
   // state
   private state = signal<AuthState>({
-    user: null,
-    checkedInitAuth: false,
+    user: undefined,
   });
 
   // selectors
   user = computed(() => this.state().user);
-  checkedInitAuth = computed(() => this.state().checkedInitAuth);
 
   constructor() {
     this.user$.pipe(takeUntilDestroyed()).subscribe((user) =>

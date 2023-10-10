@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { User } from 'firebase/auth';
+import { AuthUser } from 'src/app/shared/data-access/auth.service';
 import { Message } from 'src/app/shared/interfaces/message';
 
 @Component({
@@ -66,5 +67,5 @@ import { Message } from 'src/app/shared/interfaces/message';
 })
 export class MessageListComponent {
   @Input({ required: true }) messages!: Message[];
-  @Input({ required: true }) activeUser!: User | null;
+  @Input({ required: true }) activeUser!: AuthUser;
 }
