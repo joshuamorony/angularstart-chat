@@ -58,6 +58,9 @@ $accent-darker: mat.get-color-from-palette($angularstart-chat-accent, darker);
   --accent-color: #{$accent};
   --accent-lighter-color: #{$accent-lighter};
   --accent-darker-color: #{$accent-darker};
+
+  // custom
+  --white: #ecf0f1;
 }
 
 html,

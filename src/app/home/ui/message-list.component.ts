@@ -58,7 +58,7 @@ import { Message } from 'src/app/shared/interfaces/message';
 
       .message {
         width: 100%;
-        background: #fff;
+        background: var(--white);
         padding: 2rem;
         border-radius: 5px;
         filter: drop-shadow(2px 4px 3px var(--primary-darker-color));

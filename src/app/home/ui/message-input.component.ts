@@ -29,7 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
 
       input {
         width: 100%;
-        background: #fff;
+        background: var(--white);
         border: none;
         font-size: 1.2em;
         padding: 2rem 1rem;
