@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 
 interface MessageState {
   messages: Message[];
+  error: string | null;
 }
 
 @Injectable({
@@ -29,15 +30,18 @@ export class MessageService {
     })
   );
   add$ = new Subject<Message['content']>();
+  error$ = new Subject<string>();
   logout$ = this.authUser$.pipe(filter((user) => !user));
 
   // state
   private state = signal<MessageState>({
     messages: [],
+    error: null,
   });
 
   // selectors
   messages = computed(() => this.state().messages);
+  error = computed(() => this.state().error);
 
   constructor() {
     // reducers
@@ -53,12 +57,23 @@ export class MessageService {
         takeUntilDestroyed(),
         exhaustMap((message) => this.addMessage(message))
       )
-      .subscribe();
+      .subscribe({
+        error: (err) => {
+          console.log(err);
+          this.error$.next('Failed to send message');
+        },
+      });
 
     this.logout$
       .pipe(takeUntilDestroyed())
       .subscribe(() =>
         this.state.update((state) => ({ ...state, messages: [] }))
+      );
+
+    this.error$
+      .pipe(takeUntilDestroyed())
+      .subscribe((error) =>
+        this.state.update((state) => ({ ...state, error }))
       );
   }
 
