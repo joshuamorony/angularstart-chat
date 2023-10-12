@@ -1,7 +1,8 @@
 import { Component, effect, inject } from '@angular/core';
 import { RegisterFormComponent } from './ui/register-form.component';
 import { RegisterService } from './data-access/register.service';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/shared/data-access/auth.service';
 
 @Component({
   standalone: true,
@@ -19,11 +20,12 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class RegisterComponent {
   public registerService = inject(RegisterService);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   constructor() {
     effect(() => {
-      if (this.registerService.status() === 'success') {
+      if (this.authService.user()) {
         this.router.navigate(['home']);
       }
     });
