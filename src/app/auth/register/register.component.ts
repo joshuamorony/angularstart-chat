@@ -18,7 +18,7 @@ import { AuthService } from 'src/app/shared/data-access/auth.service';
   providers: [RegisterService],
   imports: [RegisterFormComponent],
 })
-export class RegisterComponent {
+export default class RegisterComponent {
   public registerService = inject(RegisterService);
   private authService = inject(AuthService);
   private router = inject(Router);
