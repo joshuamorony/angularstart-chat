@@ -97,6 +97,6 @@ export class MessageService {
     };
 
     const messagesCollection = collection(this.firestore, 'messages');
-    return defer(() => from(addDoc(messagesCollection, newMessage)));
+    return defer(() => addDoc(messagesCollection, newMessage));
   }
 }
