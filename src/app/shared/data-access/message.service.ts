@@ -1,13 +1,14 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { EMPTY, Observable, Subject, defer, exhaustMap, from } from 'rxjs';
+import { Observable, Subject, defer, exhaustMap, merge } from 'rxjs';
 import { collection, query, orderBy, limit, addDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
-import { catchError, filter, map, retry } from 'rxjs/operators';
+import { filter, map, retry } from 'rxjs/operators';
 
 import { FIRESTORE } from 'src/app/app.config';
 import { Message } from '../interfaces/message';
 import { AuthService } from './auth.service';
+import { connect } from 'ngxtension/connect';
 
 interface MessageState {
   messages: Message[];
@@ -45,12 +46,14 @@ export class MessageService {
 
   constructor() {
     // reducers
-    this.messages$.pipe(takeUntilDestroyed()).subscribe((messages) =>
-      this.state.update((state) => ({
-        ...state,
-        messages,
-      }))
+    const nextMessages$ = merge(
+      this.messages$.pipe(map((messages) => ({ messages }))),
+      this.logout$.pipe(map(() => ({ messages: [] })))
     );
+
+    const nextError$ = this.error$.pipe(map((error) => ({ error })));
+
+    connect(this.state, merge(nextMessages$, nextError$));
 
     this.add$
       .pipe(
@@ -63,18 +66,6 @@ export class MessageService {
           this.error$.next('Failed to send message');
         },
       });
-
-    this.logout$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() =>
-        this.state.update((state) => ({ ...state, messages: [] }))
-      );
-
-    this.error$
-      .pipe(takeUntilDestroyed())
-      .subscribe((error) =>
-        this.state.update((state) => ({ ...state, error }))
-      );
   }
 
   private getMessages() {
