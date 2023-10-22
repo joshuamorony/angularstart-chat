@@ -41,15 +41,12 @@ export class LoginService {
 
   constructor() {
     // reducers
-    connect(
-      this.state,
-      merge(
-        this.userAuthenticated$.pipe(
-          map(() => ({ status: 'success' as const }))
-        ),
-        this.login$.pipe(map(() => ({ status: 'authenticating' as const }))),
-        this.error$.pipe(map(() => ({ status: 'error' as const })))
-      )
+    const nextStatus$ = merge(
+      this.userAuthenticated$.pipe(map(() => ({ status: 'success' as const }))),
+      this.login$.pipe(map(() => ({ status: 'authenticating' as const }))),
+      this.error$.pipe(map(() => ({ status: 'error' as const })))
     );
+
+    connect(this.state, merge(nextStatus$));
   }
 }
