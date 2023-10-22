@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Subject, switchMap } from 'rxjs';
+import { EMPTY, Subject, merge, switchMap } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
@@ -43,17 +43,13 @@ export class LoginService {
     // reducers
     connect(
       this.state,
-      this.userAuthenticated$.pipe(map(() => ({ status: 'success' as const })))
-    );
-
-    connect(
-      this.state,
-      this.login$.pipe(map(() => ({ status: 'authenticating' as const })))
-    );
-
-    connect(
-      this.state,
-      this.error$.pipe(map(() => ({ status: 'error' as const })))
+      merge(
+        this.userAuthenticated$.pipe(
+          map(() => ({ status: 'success' as const }))
+        ),
+        this.login$.pipe(map(() => ({ status: 'authenticating' as const }))),
+        this.error$.pipe(map(() => ({ status: 'error' as const })))
+      )
     );
   }
 }
