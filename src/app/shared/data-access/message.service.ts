@@ -1,9 +1,9 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { Observable, Subject, defer, exhaustMap, merge } from 'rxjs';
+import { Observable, Subject, defer, exhaustMap, merge, of } from 'rxjs';
 import { collection, query, orderBy, limit, addDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
-import { filter, map, retry } from 'rxjs/operators';
+import { catchError, filter, ignoreElements, map, retry } from 'rxjs/operators';
 
 import { FIRESTORE } from 'src/app/app.config';
 import { Message } from '../interfaces/message';
@@ -51,21 +51,16 @@ export class MessageService {
       this.logout$.pipe(map(() => ({ messages: [] })))
     );
 
-    const nextError$ = this.error$.pipe(map((error) => ({ error })));
+    const nextError$ = merge(
+      this.error$.pipe(map((error) => ({ error }))),
+      this.add$.pipe(
+        exhaustMap((message) => this.addMessage(message)),
+        ignoreElements(),
+        catchError((error) => of({ error }))
+      )
+    );
 
     connect(this.state, merge(nextMessages$, nextError$));
-
-    this.add$
-      .pipe(
-        takeUntilDestroyed(),
-        exhaustMap((message) => this.addMessage(message))
-      )
-      .subscribe({
-        error: (err) => {
-          console.log(err);
-          this.error$.next('Failed to send message');
-        },
-      });
   }
 
   private getMessages() {
