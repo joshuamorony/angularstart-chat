@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { from, defer } from 'rxjs';
+import { from, defer, merge } from 'rxjs';
+import { map } from 'rxjs/operators';
 import {
   User,
   createUserWithEmailAndPassword,
@@ -10,6 +11,7 @@ import { authState } from 'rxfire/auth';
 import { Credentials } from '../interfaces/credentials';
 import { AUTH } from 'src/app/app.config';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { connect } from 'ngxtension/connect';
 
 export type AuthUser = User | null | undefined;
 
@@ -35,12 +37,9 @@ export class AuthService {
   user = computed(() => this.state().user);
 
   constructor() {
-    this.user$.pipe(takeUntilDestroyed()).subscribe((user) =>
-      this.state.update((state) => ({
-        ...state,
-        user,
-      }))
-    );
+    const nextState$ = merge(this.user$.pipe(map((user) => ({ user }))));
+
+    connect(this.state).with(nextState$);
   }
 
   login(credentials: Credentials) {
