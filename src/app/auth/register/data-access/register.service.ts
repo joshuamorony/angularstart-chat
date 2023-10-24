@@ -1,6 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { EMPTY, Subject, catchError, switchMap } from 'rxjs';
+import { connect } from 'ngxtension/connect';
+import { EMPTY, Subject, catchError, map, merge, switchMap } from 'rxjs';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
 
@@ -39,22 +40,12 @@ export class RegisterService {
 
   constructor() {
     // reducers
-    this.userCreated$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() =>
-        this.state.update((state) => ({ ...state, status: 'success' }))
-      );
+    const nextState$ = merge(
+      this.userCreated$.pipe(map(() => ({ status: 'success' as const }))),
+      this.createUser$.pipe(map(() => ({ status: 'creating' as const }))),
+      this.error$.pipe(map(() => ({ status: 'error' as const })))
+    );
 
-    this.createUser$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() =>
-        this.state.update((state) => ({ ...state, status: 'creating' }))
-      );
-
-    this.error$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() =>
-        this.state.update((state) => ({ ...state, status: 'error' }))
-      );
+    connect(this.state).with(nextState$);
   }
 }
