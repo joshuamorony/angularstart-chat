@@ -46,12 +46,9 @@ export class MessageService {
 
   constructor() {
     // reducers
-    const nextMessages$ = merge(
+    const nextState$ = merge(
       this.messages$.pipe(map((messages) => ({ messages }))),
-      this.logout$.pipe(map(() => ({ messages: [] })))
-    );
-
-    const nextError$ = merge(
+      this.logout$.pipe(map(() => ({ messages: [] }))),
       this.error$.pipe(map((error) => ({ error }))),
       this.add$.pipe(
         exhaustMap((message) => this.addMessage(message)),
@@ -60,7 +57,7 @@ export class MessageService {
       )
     );
 
-    connect(this.state, merge(nextMessages$, nextError$));
+    connect(this.state).with(nextState$);
   }
 
   private getMessages() {
