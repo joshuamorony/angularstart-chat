@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+import { NgStyle } from '@angular/common';
 import { Component, Input, ViewChild, effect, signal } from '@angular/core';
 import { CdkScrollable, ScrollingModule } from '@angular/cdk/scrolling';
 import { AuthUser } from 'src/app/shared/data-access/auth.service';
@@ -65,7 +65,7 @@ import { Message } from 'src/app/shared/interfaces/message';
       }
     `,
   ],
-  imports: [CommonModule, ScrollingModule],
+  imports: [NgStyle, ScrollingModule],
 })
 export class MessageListComponent {
   messagesSignal = signal<Message[]>([]);

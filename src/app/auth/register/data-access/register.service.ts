@@ -1,5 +1,4 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { connect } from 'ngxtension/connect';
 import { EMPTY, Subject, catchError, map, merge, switchMap } from 'rxjs';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
@@ -9,6 +8,7 @@ export type RegisterStatus = 'pending' | 'creating' | 'success' | 'error';
 
 interface RegisterState {
   status: RegisterStatus;
+  error: string | null;
 }
 
 @Injectable()
@@ -33,6 +33,7 @@ export class RegisterService {
   // state
   private state = signal<RegisterState>({
     status: 'pending',
+    error: null,
   });
 
   // selectors
