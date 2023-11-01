@@ -24,7 +24,6 @@ export class MessageService {
 
   actions = rxActions<{ add: Message['content'] }>();
 
-  // @ts-ignore TODO: remove @ts-ignore when new rx-angular/state version is released
   state = rxState<MessageState>(({set, connect, select}) => {
     set({ messages: [], error: null });
     connect('authUser', this.authService.user);
