@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { from, defer } from 'rxjs';
 import {
   User,
@@ -9,7 +9,7 @@ import {
 import { authState } from 'rxfire/auth';
 import { Credentials } from '../interfaces/credentials';
 import { AUTH } from 'src/app/app.config';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {rxState} from "@rx-angular/state";
 
 export type AuthUser = User | null | undefined;
 
@@ -17,31 +17,16 @@ interface AuthState {
   user: AuthUser;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({providedIn: 'root'})
 export class AuthService {
   private auth = inject(AUTH);
 
-  // sources
-  private user$ = authState(this.auth);
-
-  // state
-  private state = signal<AuthState>({
-    user: undefined,
+  private state = rxState<AuthState>(({set, connect}) => {
+    set({user: null});
+    connect('user', authState(this.auth));
   });
 
-  // selectors
-  user = computed(() => this.state().user);
-
-  constructor() {
-    this.user$.pipe(takeUntilDestroyed()).subscribe((user) =>
-      this.state.update((state) => ({
-        ...state,
-        user,
-      }))
-    );
-  }
+  user = this.state.signal('user');
 
   login(credentials: Credentials) {
     return from(
