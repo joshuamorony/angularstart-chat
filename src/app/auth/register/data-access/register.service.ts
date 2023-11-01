@@ -1,8 +1,8 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
-import { connect } from 'ngxtension/connect';
+import { Injectable, Signal, computed, inject } from '@angular/core';
 import { EMPTY, Subject, catchError, map, merge, switchMap } from 'rxjs';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
+import { signalFrom } from 'src/app/shared/signal';
 
 export type RegisterStatus = 'pending' | 'creating' | 'success' | 'error';
 
@@ -31,13 +31,10 @@ export class RegisterService {
   );
 
   // state
-  private state = signal<RegisterState>({
-    status: 'pending',
-    error: null,
-  });
+  private state: Signal<RegisterState>;
 
   // selectors
-  status = computed(() => this.state().status);
+  status: Signal<RegisterStatus>;
 
   constructor() {
     // reducers
@@ -47,6 +44,12 @@ export class RegisterService {
       this.error$.pipe(map(() => ({ status: 'error' as const })))
     );
 
-    connect(this.state).with(nextState$);
+    const initialState: RegisterState = {
+      status: 'pending',
+      error: null,
+    }
+
+    this.state = signalFrom(initialState, nextState$);
+    this.status = computed(() => this.state().status);
   }
 }

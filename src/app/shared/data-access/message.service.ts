@@ -1,14 +1,14 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, Signal, computed, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { Observable, Subject, defer, exhaustMap, merge, of } from 'rxjs';
-import { collection, query, orderBy, limit, addDoc } from 'firebase/firestore';
+import { addDoc, collection, limit, orderBy, query } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
+import { Observable, Subject, defer, exhaustMap, merge, of } from 'rxjs';
 import { catchError, filter, ignoreElements, map, retry } from 'rxjs/operators';
 
 import { FIRESTORE } from 'src/app/app.config';
 import { Message } from '../interfaces/message';
+import { signalFrom } from '../signal';
 import { AuthService } from './auth.service';
-import { connect } from 'ngxtension/connect';
 
 interface MessageState {
   messages: Message[];
@@ -35,14 +35,11 @@ export class MessageService {
   logout$ = this.authUser$.pipe(filter((user) => !user));
 
   // state
-  private state = signal<MessageState>({
-    messages: [],
-    error: null,
-  });
+  private state: Signal<MessageState>;
 
   // selectors
-  messages = computed(() => this.state().messages);
-  error = computed(() => this.state().error);
+  messages: Signal<Message[]>;
+  error: Signal<string | null>;
 
   constructor() {
     // reducers
@@ -57,7 +54,14 @@ export class MessageService {
       )
     );
 
-    connect(this.state).with(nextState$);
+    const initialState: MessageState = {
+      messages: [],
+      error: null,
+    };
+
+    this.state = signalFrom(initialState, nextState$);
+    this.messages = computed(() => this.state().messages);
+    this.error = computed(() => this.state().error);
   }
 
   private getMessages() {

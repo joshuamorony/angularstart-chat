@@ -1,9 +1,9 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, Signal, computed, inject } from '@angular/core';
 import { EMPTY, Subject, merge, switchMap } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
-import { connect } from 'ngxtension/connect';
+import { signalFrom } from 'src/app/shared/signal';
 
 export type LoginStatus = 'pending' | 'authenticating' | 'success' | 'error';
 
@@ -31,12 +31,10 @@ export class LoginService {
   );
 
   // state
-  private state = signal<LoginState>({
-    status: 'pending',
-  });
+  private state: Signal<LoginState>
 
   // selectors
-  status = computed(() => this.state().status);
+  status: Signal<LoginStatus>
 
   constructor() {
     // reducers
@@ -46,6 +44,9 @@ export class LoginService {
       this.error$.pipe(map(() => ({ status: 'error' as const })))
     );
 
-    connect(this.state).with(nextState$);
+    const initialState: LoginState = { status: 'pending' };
+
+    this.state = signalFrom(initialState, nextState$);
+    this.status = computed(() => this.state().status);
   }
 }

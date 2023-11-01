@@ -1,6 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
-import { from, defer, merge } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Injectable, Signal, computed, inject } from '@angular/core';
 import {
   User,
   createUserWithEmailAndPassword,
@@ -8,10 +6,11 @@ import {
   signOut,
 } from 'firebase/auth';
 import { authState } from 'rxfire/auth';
-import { Credentials } from '../interfaces/credentials';
+import { defer, from, merge } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AUTH } from 'src/app/app.config';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { connect } from 'ngxtension/connect';
+import { Credentials } from '../interfaces/credentials';
+import { signalFrom } from '../signal';
 
 export type AuthUser = User | null | undefined;
 
@@ -29,17 +28,17 @@ export class AuthService {
   private user$ = authState(this.auth);
 
   // state
-  private state = signal<AuthState>({
-    user: undefined,
-  });
+  private state: Signal<AuthState>
 
   // selectors
-  user = computed(() => this.state().user);
+  user: Signal<AuthUser>
 
   constructor() {
     const nextState$ = merge(this.user$.pipe(map((user) => ({ user }))));
+    const initialState: AuthState = { user: undefined };
 
-    connect(this.state).with(nextState$);
+    this.state = signalFrom(initialState, nextState$);
+    this.user = computed(() => this.state().user);
   }
 
   login(credentials: Credentials) {
