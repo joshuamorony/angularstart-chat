@@ -1,4 +1,9 @@
-import { ApplicationConfig, InjectionToken } from '@angular/core';
+import {
+  APP_INITIALIZER,
+  ApplicationConfig,
+  InjectionToken,
+  inject,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { initializeApp } from 'firebase/app';
 import {
@@ -12,6 +17,7 @@ import { environment } from '../environments/environment';
 
 import { routes } from './app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { AuthService } from './shared/data-access/auth.service';
 
 const app = initializeApp(environment.firebase);
 
@@ -42,6 +48,19 @@ export const FIRESTORE = new InjectionToken('Firebase firestore', {
   },
 });
 
+const initializeUserState = () => ({
+  provide: APP_INITIALIZER,
+  multi: true,
+  useFactory: () => {
+    const authService = inject(AuthService);
+    return () => authService.userStateInitialized();
+  },
+});
+
 export const appConfig: ApplicationConfig = {
-  providers: [provideRouter(routes), provideAnimations()],
+  providers: [
+    provideRouter(routes),
+    provideAnimations(),
+    initializeUserState(),
+  ],
 };

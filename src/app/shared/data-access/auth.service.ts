@@ -1,5 +1,5 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { from, defer } from 'rxjs';
+import { from, defer, Subject, first, tap } from 'rxjs';
 import {
   User,
   createUserWithEmailAndPassword,
@@ -22,6 +22,7 @@ interface AuthState {
 })
 export class AuthService {
   private auth = inject(AUTH);
+  private stateChecked = new Subject();
 
   // sources
   private user$ = authState(this.auth);
@@ -35,12 +36,21 @@ export class AuthService {
   user = computed(() => this.state().user);
 
   constructor() {
-    this.user$.pipe(takeUntilDestroyed()).subscribe((user) =>
-      this.state.update((state) => ({
-        ...state,
-        user,
-      }))
-    );
+    this.user$
+      .pipe(
+        takeUntilDestroyed(),
+        tap(() => this.stateChecked.next(true))
+      )
+      .subscribe((user) =>
+        this.state.update((state) => ({
+          ...state,
+          user,
+        }))
+      );
+  }
+
+  userStateInitialized() {
+    return this.stateChecked.asObservable().pipe(first());
   }
 
   login(credentials: Credentials) {
