@@ -37,7 +37,7 @@ xdescribe('MessageService', () => {
         content: 'test',
       };
 
-      service.add$.next(testMessage.content);
+      service.actions.add(testMessage.content);
 
       expect(mockCollection).toHaveBeenCalledWith({} as any, 'messages');
       expect(mockAddDoc).toHaveBeenCalledWith(mockCollectionReference as any, {

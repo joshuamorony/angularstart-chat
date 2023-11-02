@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
         [messages]="messageService.messages()"
         [activeUser]="authService.user()"
       />
-      <app-message-input (send)="messageService.add$.next($event)" />
+      <app-message-input (send)="messageService.actions.add($event)" />
     </div>
   `,
   imports: [

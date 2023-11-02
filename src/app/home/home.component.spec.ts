@@ -18,9 +18,7 @@ describe('HomeComponent', () => {
         {
           provide: MessageService,
           useValue: {
-            add$: {
-              next: jest.fn(),
-            },
+            add: () => {},
             messages: jest.fn().mockReturnValue(mockMessages),
           },
         },
@@ -66,7 +64,7 @@ describe('HomeComponent', () => {
         const testValue = 'hello';
         messageInput.triggerEventHandler('send', testValue);
 
-        expect(messageService.add$.next).toHaveBeenCalledWith(testValue);
+        expect(messageService.actions.add).toHaveBeenCalledWith(testValue);
       });
     });
   });
