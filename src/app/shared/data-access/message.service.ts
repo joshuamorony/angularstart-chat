@@ -1,6 +1,6 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { Observable, Subject, defer, exhaustMap, merge, of } from 'rxjs';
+import { Observable, defer, exhaustMap, merge, of } from 'rxjs';
 import { collection, query, orderBy, limit, addDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
 import { catchError, filter, ignoreElements, map, retry } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { catchError, filter, ignoreElements, map, retry } from 'rxjs/operators';
 import { FIRESTORE } from 'src/app/app.config';
 import { Message } from '../interfaces/message';
 import { AuthService } from './auth.service';
-import { connect } from 'ngxtension/connect';
+import { signalSlice } from 'ngxtension/signal-slice';
 
 interface MessageState {
   messages: Message[];
@@ -23,6 +23,11 @@ export class MessageService {
   private authService = inject(AuthService);
   private authUser$ = toObservable(this.authService.user);
 
+  initialState: MessageState = {
+    messages: [],
+    error: null,
+  };
+
   // sources
   messages$ = this.getMessages().pipe(
     // restart stream when user reauthenticates
@@ -30,35 +35,26 @@ export class MessageService {
       delay: () => this.authUser$.pipe(filter((user) => !!user)),
     })
   );
-  add$ = new Subject<Message['content']>();
-  error$ = new Subject<string>();
   logout$ = this.authUser$.pipe(filter((user) => !user));
 
+  sources$ = merge(
+    this.messages$.pipe(map((messages) => ({ messages }))),
+    this.logout$.pipe(map(() => ({ messages: [] })))
+  );
+
   // state
-  private state = signal<MessageState>({
-    messages: [],
-    error: null,
+  state = signalSlice({
+    initialState: this.initialState,
+    sources: [this.sources$],
+    asyncReducers: {
+      add: (_state, $: Observable<Message['content']>) =>
+        $.pipe(
+          exhaustMap((message) => this.addMessage(message)),
+          ignoreElements(),
+          catchError((error) => of({ error }))
+        ),
+    },
   });
-
-  // selectors
-  messages = computed(() => this.state().messages);
-  error = computed(() => this.state().error);
-
-  constructor() {
-    // reducers
-    const nextState$ = merge(
-      this.messages$.pipe(map((messages) => ({ messages }))),
-      this.logout$.pipe(map(() => ({ messages: [] }))),
-      this.error$.pipe(map((error) => ({ error }))),
-      this.add$.pipe(
-        exhaustMap((message) => this.addMessage(message)),
-        ignoreElements(),
-        catchError((error) => of({ error }))
-      )
-    );
-
-    connect(this.state).with(nextState$);
-  }
 
   private getMessages() {
     const messagesCollection = query(
