@@ -25,16 +25,15 @@ interface AuthState {
 export class AuthService {
   private auth = inject(AUTH);
 
-  // sources
-  private user$ = authState(this.auth);
-
-  // state
   private initialState: AuthState = {
     user: undefined,
   };
 
+  // sources
+  private user$ = authState(this.auth);
   private sources$ = merge(this.user$.pipe(map((user) => ({ user }))));
 
+  // state
   state = signalSlice({
     initialState: this.initialState,
     sources: [this.sources$],

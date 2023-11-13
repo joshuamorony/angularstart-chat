@@ -21,7 +21,6 @@ interface MessageState {
 export class MessageService {
   private firestore = inject(FIRESTORE);
   private authService = inject(AuthService);
-  private authUser$ = toObservable(this.authService.user);
 
   private initialState: MessageState = {
     messages: [],
@@ -29,6 +28,7 @@ export class MessageService {
   };
 
   // sources
+  private authUser$ = toObservable(this.authService.state.user);
   private messages$ = this.getMessages().pipe(
     // restart stream when user reauthenticates
     retry({
@@ -70,7 +70,7 @@ export class MessageService {
 
   private addMessage(message: string) {
     const newMessage = {
-      author: this.authService.user()?.email,
+      author: this.authService.state.user()?.email,
       content: message,
       created: Date.now().toString(),
     };

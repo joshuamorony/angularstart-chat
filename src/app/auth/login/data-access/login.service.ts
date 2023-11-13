@@ -1,9 +1,10 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { EMPTY, Subject, merge, switchMap } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, merge, switchMap } from 'rxjs';
+import { catchError, map, startWith } from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
 import { connect } from 'ngxtension/connect';
+import { signalSlice } from 'ngxtension/signal-slice';
 
 export type LoginStatus = 'pending' | 'authenticating' | 'success' | 'error';
 
@@ -15,37 +16,35 @@ interface LoginState {
 export class LoginService {
   private authService = inject(AuthService);
 
-  // sources
-  error$ = new Subject<any>();
-  login$ = new Subject<Credentials>();
+  private initialState: LoginState = {
+    status: 'pending',
+  };
 
-  userAuthenticated$ = this.login$.pipe(
-    switchMap((credentials) =>
-      this.authService.login(credentials).pipe(
-        catchError((err) => {
-          this.error$.next(err);
-          return EMPTY;
-        })
-      )
-    )
+  // sources
+  private error$ = new Subject<void>();
+
+  private sources$ = merge(
+    this.error$.pipe(map(() => ({ status: 'error' as const })))
   );
 
   // state
-  private state = signal<LoginState>({
-    status: 'pending',
+  state = signalSlice({
+    initialState: this.initialState,
+    sources: [this.sources$],
+    asyncReducers: {
+      login: (_state, $: Observable<Credentials>) =>
+        $.pipe(
+          switchMap((credentials) =>
+            this.authService.login(credentials).pipe(
+              map(() => ({ status: 'success' as const })),
+              catchError(() => {
+                this.error$.next();
+                return EMPTY;
+              })
+            )
+          ),
+          startWith({ status: 'authenticating' as const })
+        ),
+    },
   });
-
-  // selectors
-  status = computed(() => this.state().status);
-
-  constructor() {
-    // reducers
-    const nextState$ = merge(
-      this.userAuthenticated$.pipe(map(() => ({ status: 'success' as const }))),
-      this.login$.pipe(map(() => ({ status: 'authenticating' as const }))),
-      this.error$.pipe(map(() => ({ status: 'error' as const })))
-    );
-
-    connect(this.state).with(nextState$);
-  }
 }
