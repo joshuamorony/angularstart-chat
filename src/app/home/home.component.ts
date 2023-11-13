@@ -20,10 +20,10 @@ import { Router } from '@angular/router';
         </button>
       </mat-toolbar>
       <app-message-list
-        [messages]="messageService.messages()"
-        [activeUser]="authService.user()"
+        [messages]="messageService.state.messages()"
+        [activeUser]="authService.state.user()"
       />
-      <app-message-input (send)="messageService.add$.next($event)" />
+      <app-message-input (send)="messageService.state.add($event)" />
     </div>
   `,
   imports: [
@@ -65,7 +65,7 @@ export default class HomeComponent {
 
   constructor() {
     effect(() => {
-      if (!this.authService.user()) {
+      if (!this.authService.state.user()) {
         this.router.navigate(['auth', 'login']);
       }
     });

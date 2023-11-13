@@ -10,8 +10,8 @@ import { AuthService } from 'src/app/shared/data-access/auth.service';
   template: `
     <div class="container gradient-bg">
       <app-register-form
-        [status]="registerService.status()"
-        (register)="registerService.createUser$.next($event)"
+        [status]="registerService.state.status()"
+        (register)="registerService.state.createUser($event)"
       />
     </div>
   `,
@@ -25,7 +25,7 @@ export default class RegisterComponent {
 
   constructor() {
     effect(() => {
-      if (this.authService.user()) {
+      if (this.authService.state.user()) {
         this.router.navigate(['home']);
       }
     });

@@ -10,10 +10,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   selector: 'app-login',
   template: `
     <div class="container gradient-bg">
-      @if(authService.user() === null){
+      @if(authService.state.user() === null){
       <app-login-form
-        [loginStatus]="loginService.status()"
-        (login)="loginService.login$.next($event)"
+        [loginStatus]="loginService.state.status()"
+        (login)="loginService.state.login($event)"
       />
       <a routerLink="/auth/register">Create account</a>
       } @else {
@@ -39,7 +39,7 @@ export default class LoginComponent {
 
   constructor() {
     effect(() => {
-      if (this.authService.user()) {
+      if (this.authService.state.user()) {
         this.router.navigate(['home']);
       }
     });
