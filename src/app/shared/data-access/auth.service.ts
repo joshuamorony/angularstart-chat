@@ -10,8 +10,8 @@ import {
 import { authState } from 'rxfire/auth';
 import { Credentials } from '../interfaces/credentials';
 import { AUTH } from 'src/app/app.config';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { connect } from 'ngxtension/connect';
+import { signalSlice } from 'ngxtension/signal-slice';
 
 export type AuthUser = User | null | undefined;
 
@@ -29,27 +29,23 @@ export class AuthService {
   private user$ = authState(this.auth);
 
   // state
-  private state = signal<AuthState>({
+  private initialState: AuthState = {
     user: undefined,
+  };
+
+  private sources$ = merge(this.user$.pipe(map((user) => ({ user }))));
+
+  state = signalSlice({
+    initialState: this.initialState,
+    sources: [this.sources$],
   });
 
-  // selectors
-  user = computed(() => this.state().user);
-
-  constructor() {
-    const nextState$ = merge(this.user$.pipe(map((user) => ({ user }))));
-
-    connect(this.state).with(nextState$);
-  }
-
   login(credentials: Credentials) {
-    return from(
-      defer(() =>
-        signInWithEmailAndPassword(
-          this.auth,
-          credentials.email,
-          credentials.password
-        )
+    return defer(() =>
+      signInWithEmailAndPassword(
+        this.auth,
+        credentials.email,
+        credentials.password
       )
     );
   }

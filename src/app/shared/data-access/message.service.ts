@@ -23,21 +23,21 @@ export class MessageService {
   private authService = inject(AuthService);
   private authUser$ = toObservable(this.authService.user);
 
-  initialState: MessageState = {
+  private initialState: MessageState = {
     messages: [],
     error: null,
   };
 
   // sources
-  messages$ = this.getMessages().pipe(
+  private messages$ = this.getMessages().pipe(
     // restart stream when user reauthenticates
     retry({
       delay: () => this.authUser$.pipe(filter((user) => !!user)),
     })
   );
-  logout$ = this.authUser$.pipe(filter((user) => !user));
+  private logout$ = this.authUser$.pipe(filter((user) => !user));
 
-  sources$ = merge(
+  private sources$ = merge(
     this.messages$.pipe(map((messages) => ({ messages }))),
     this.logout$.pipe(map(() => ({ messages: [] })))
   );
