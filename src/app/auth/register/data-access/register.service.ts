@@ -46,10 +46,11 @@ export class RegisterService {
               catchError((err) => {
                 this.error$.next(err);
                 return EMPTY;
-              })
+              }),
+
+              startWith({ status: 'creating' as const })
             )
-          ),
-          startWith({ status: 'creating' as const })
+          )
         ),
     },
   });

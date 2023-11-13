@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { EMPTY, Observable, Subject, merge, switchMap } from 'rxjs';
-import { catchError, map, startWith } from 'rxjs/operators';
+import { catchError, map, startWith, tap } from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
 import { signalSlice } from 'ngxtension/signal-slice';
@@ -39,10 +39,10 @@ export class LoginService {
               catchError(() => {
                 this.error$.next();
                 return EMPTY;
-              })
+              }),
+              startWith({ status: 'authenticating' as const })
             )
-          ),
-          startWith({ status: 'authenticating' as const })
+          )
         ),
     },
   });
