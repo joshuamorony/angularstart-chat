@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { from, defer, merge } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
@@ -8,10 +8,9 @@ import {
   signOut,
 } from 'firebase/auth';
 import { authState } from 'rxfire/auth';
-import { Credentials } from '../interfaces/credentials';
 import { AUTH } from 'src/app/app.config';
-import { connect } from 'ngxtension/connect';
 import { signalSlice } from 'ngxtension/signal-slice';
+import { Credentials } from '../interfaces/credentials';
 
 export type AuthUser = User | null | undefined;
 
