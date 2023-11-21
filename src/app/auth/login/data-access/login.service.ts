@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { EMPTY, Observable, Subject, merge, switchMap } from 'rxjs';
-import { catchError, map, startWith, tap } from 'rxjs/operators';
+import { catchError, map, startWith } from 'rxjs/operators';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
 import { signalSlice } from 'ngxtension/signal-slice';
@@ -30,7 +30,7 @@ export class LoginService {
   state = signalSlice({
     initialState: this.initialState,
     sources: [this.sources$],
-    asyncReducers: {
+    actionSources: {
       login: (_state, $: Observable<Credentials>) =>
         $.pipe(
           switchMap((credentials) =>

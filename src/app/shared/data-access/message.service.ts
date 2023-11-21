@@ -46,7 +46,7 @@ export class MessageService {
   state = signalSlice({
     initialState: this.initialState,
     sources: [this.sources$],
-    asyncReducers: {
+    actionSources: {
       add: (_state, $: Observable<Message['content']>) =>
         $.pipe(
           exhaustMap((message) => this.addMessage(message)),

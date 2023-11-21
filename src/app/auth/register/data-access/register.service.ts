@@ -30,14 +30,16 @@ export class RegisterService {
   };
 
   // sources
-  error$ = new Subject<any>();
-  sources$ = merge(this.error$.pipe(map(() => ({ status: 'error' as const }))));
+  private error$ = new Subject<any>();
+  private sources$ = merge(
+    this.error$.pipe(map(() => ({ status: 'error' as const })))
+  );
 
   // state
   state = signalSlice({
     initialState: this.initialState,
     sources: [this.sources$],
-    asyncReducers: {
+    actionSources: {
       createUser: (_state, $: Observable<Credentials>) =>
         $.pipe(
           switchMap((credentials) =>
@@ -47,7 +49,6 @@ export class RegisterService {
                 this.error$.next(err);
                 return EMPTY;
               }),
-
               startWith({ status: 'creating' as const })
             )
           )
