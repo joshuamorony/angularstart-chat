@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -49,7 +49,7 @@ import { MatIconModule } from '@angular/material/icon';
   ],
 })
 export class MessageInputComponent {
-  @Output() send = new EventEmitter<string>();
+  send = output<string>();
 
   messageControl = new FormControl();
 }
