@@ -1,9 +1,9 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { EMPTY, Observable, Subject, defer, exhaustMap, from } from 'rxjs';
+import { Observable, Subject, defer, exhaustMap } from 'rxjs';
 import { collection, query, orderBy, limit, addDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
-import { catchError, filter, map, retry } from 'rxjs/operators';
+import { filter, map, retry } from 'rxjs/operators';
 
 import { FIRESTORE } from 'src/app/app.config';
 import { Message } from '../interfaces/message';
@@ -27,7 +27,7 @@ export class MessageService {
     // restart stream when user reauthenticates
     retry({
       delay: () => this.authUser$.pipe(filter((user) => !!user)),
-    })
+    }),
   );
   add$ = new Subject<Message['content']>();
   error$ = new Subject<string>();
@@ -49,13 +49,13 @@ export class MessageService {
       this.state.update((state) => ({
         ...state,
         messages,
-      }))
+      })),
     );
 
     this.add$
       .pipe(
         takeUntilDestroyed(),
-        exhaustMap((message) => this.addMessage(message))
+        exhaustMap((message) => this.addMessage(message)),
       )
       .subscribe({
         error: (err) => {
@@ -67,13 +67,13 @@ export class MessageService {
     this.logout$
       .pipe(takeUntilDestroyed())
       .subscribe(() =>
-        this.state.update((state) => ({ ...state, messages: [] }))
+        this.state.update((state) => ({ ...state, messages: [] })),
       );
 
     this.error$
       .pipe(takeUntilDestroyed())
       .subscribe((error) =>
-        this.state.update((state) => ({ ...state, error }))
+        this.state.update((state) => ({ ...state, error })),
       );
   }
 
@@ -81,11 +81,11 @@ export class MessageService {
     const messagesCollection = query(
       collection(this.firestore, 'messages'),
       orderBy('created', 'desc'),
-      limit(50)
+      limit(50),
     );
 
     return collectionData(messagesCollection, { idField: 'id' }).pipe(
-      map((messages) => [...messages].reverse())
+      map((messages) => [...messages].reverse()),
     ) as Observable<Message[]>;
   }
 
