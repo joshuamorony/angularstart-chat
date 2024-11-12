@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/shared/data-access/auth.service';
   template: `
     <div class="container gradient-bg">
       <app-register-form
-        [status]="registerService.status()"
+        [status]="registerService.createdUser.status()"
         (register)="registerService.createUser$.next($event)"
       />
     </div>

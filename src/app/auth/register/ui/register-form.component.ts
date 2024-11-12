@@ -1,4 +1,10 @@
-import { Component, inject, input, output } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  output,
+  ResourceStatus,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,7 +13,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
 import { passwordMatchesValidator } from '../utils/password-matches';
-import { RegisterStatus } from '../data-access/register.service';
 
 @Component({
   standalone: true,
@@ -64,9 +69,9 @@ import { RegisterStatus } from '../data-access/register.service';
         }
       </mat-form-field>
 
-      @if (status() === 'error') {
+      @if (status() === resourceStatus.Error) {
         <mat-error>Could not create account with those details.</mat-error>
-      } @else if (status() === 'creating') {
+      } @else if (status() === resourceStatus.Loading) {
         <mat-spinner diameter="50"></mat-spinner>
       }
 
@@ -74,7 +79,7 @@ import { RegisterStatus } from '../data-access/register.service';
         mat-raised-button
         color="accent"
         type="submit"
-        [disabled]="status() === 'creating'"
+        [disabled]="status() === resourceStatus.Loading"
       >
         Submit
       </button>
@@ -111,8 +116,9 @@ import { RegisterStatus } from '../data-access/register.service';
   ],
 })
 export class RegisterFormComponent {
-  status = input.required<RegisterStatus>();
+  status = input.required<ResourceStatus>();
   register = output<Credentials>();
+  resourceStatus = ResourceStatus;
 
   private fb = inject(FormBuilder);
 

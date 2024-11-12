@@ -1,4 +1,10 @@
-import { Component, inject, input, output } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  output,
+  ResourceStatus,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -6,7 +12,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
-import { LoginStatus } from '../data-access/login.service';
 
 @Component({
   standalone: true,
@@ -37,10 +42,10 @@ import { LoginStatus } from '../data-access/login.service';
         <mat-icon matPrefix>lock</mat-icon>
       </mat-form-field>
 
-      @if (loginStatus() === 'error') {
+      @if (loginStatus() === resourceStatus.Error) {
         <mat-error>Could not log you in with those details.</mat-error>
       }
-      @if (loginStatus() === 'authenticating') {
+      @if (loginStatus() === resourceStatus.Loading) {
         <mat-spinner diameter="50"></mat-spinner>
       }
 
@@ -48,7 +53,7 @@ import { LoginStatus } from '../data-access/login.service';
         mat-raised-button
         color="accent"
         type="submit"
-        [disabled]="loginStatus() === 'authenticating'"
+        [disabled]="loginStatus() === resourceStatus.Loading"
       >
         Login
       </button>
@@ -85,8 +90,9 @@ import { LoginStatus } from '../data-access/login.service';
   ],
 })
 export class LoginFormComponent {
-  loginStatus = input.required<LoginStatus>();
+  loginStatus = input.required<ResourceStatus>();
   login = output<Credentials>();
+  resourceStatus = ResourceStatus;
 
   private fb = inject(FormBuilder);
 
