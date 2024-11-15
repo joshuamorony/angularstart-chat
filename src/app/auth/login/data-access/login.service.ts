@@ -10,9 +10,10 @@ export class LoginService {
 
   // sources
   login$ = new Subject<Credentials>();
+  login = toSignal(this.login$);
 
   userAuthenticated = resource({
-    request: toSignal(this.login$),
+    request: this.login,
     loader: ({ request }) => this.authService.login(request),
   });
 }

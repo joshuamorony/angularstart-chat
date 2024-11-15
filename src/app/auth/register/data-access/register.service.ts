@@ -9,11 +9,11 @@ export class RegisterService {
   private authService = inject(AuthService);
 
   // sources
-  error$ = new Subject<any>();
   createUser$ = new Subject<Credentials>();
+  createUser = toSignal(this.createUser$);
 
   createdUser = resource({
-    request: toSignal(this.createUser$),
+    request: this.createUser,
     loader: ({ request }) => this.authService.createAccount(request),
   });
 }
