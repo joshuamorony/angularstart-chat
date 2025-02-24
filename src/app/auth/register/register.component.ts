@@ -5,9 +5,8 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/shared/data-access/auth.service';
 
 @Component({
-  standalone: true,
-  selector: 'app-register',
-  template: `
+    selector: 'app-register',
+    template: `
     <div class="container gradient-bg">
       <app-register-form
         [status]="registerService.createdUser.status()"
@@ -15,8 +14,8 @@ import { AuthService } from 'src/app/shared/data-access/auth.service';
       />
     </div>
   `,
-  providers: [RegisterService],
-  imports: [RegisterFormComponent],
+    providers: [RegisterService],
+    imports: [RegisterFormComponent]
 })
 export default class RegisterComponent {
   public registerService = inject(RegisterService);

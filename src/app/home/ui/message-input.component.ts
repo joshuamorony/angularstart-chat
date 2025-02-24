@@ -4,9 +4,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  standalone: true,
-  selector: 'app-message-input',
-  template: `
+    selector: 'app-message-input',
+    template: `
     <input
       type="text"
       [formControl]="messageControl"
@@ -19,9 +18,9 @@ import { MatIconModule } from '@angular/material/icon';
       <mat-icon>send</mat-icon>
     </button>
   `,
-  imports: [ReactiveFormsModule, MatButtonModule, MatIconModule],
-  styles: [
-    `
+    imports: [ReactiveFormsModule, MatButtonModule, MatIconModule],
+    styles: [
+        `
       :host {
         width: 100%;
         position: relative;
@@ -46,7 +45,7 @@ import { MatIconModule } from '@angular/material/icon';
         }
       }
     `,
-  ],
+    ]
 })
 export class MessageInputComponent {
   send = output<string>();

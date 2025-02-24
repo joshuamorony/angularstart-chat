@@ -9,7 +9,6 @@ import { AuthService } from '../shared/data-access/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
-  standalone: true,
   selector: 'app-home',
   template: `
     <div class="container">
@@ -20,10 +19,10 @@ import { Router } from '@angular/router';
         </button>
       </mat-toolbar>
       <app-message-list
-        [messages]="messageService.messages()"
+        [messages]="messageService.messages.value() ?? []"
         [activeUser]="authService.user()"
       />
-      <app-message-input (send)="messageService.add$.next($event)" />
+      <app-message-input (send)="messageService.add.set($event)" />
     </div>
   `,
   imports: [

@@ -4,9 +4,8 @@ import { AuthUser } from 'src/app/shared/data-access/auth.service';
 import { Message } from 'src/app/shared/interfaces/message';
 
 @Component({
-  standalone: true,
-  selector: 'app-message-list',
-  template: `
+    selector: 'app-message-list',
+    template: `
     <ul cdkScrollable class="gradient-bg">
       @for (message of messages(); track message.created) {
         <li
@@ -31,8 +30,8 @@ import { Message } from 'src/app/shared/interfaces/message';
       }
     </ul>
   `,
-  styles: [
-    `
+    styles: [
+        `
       ul {
         height: 100%;
         overflow: scroll;
@@ -62,8 +61,8 @@ import { Message } from 'src/app/shared/interfaces/message';
         filter: drop-shadow(2px 4px 3px var(--primary-darker-color));
       }
     `,
-  ],
-  imports: [ScrollingModule],
+    ],
+    imports: [ScrollingModule]
 })
 export class MessageListComponent {
   messages = input.required<Message[]>();

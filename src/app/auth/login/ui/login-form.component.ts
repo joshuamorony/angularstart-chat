@@ -14,9 +14,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Credentials } from 'src/app/shared/interfaces/credentials';
 
 @Component({
-  standalone: true,
-  selector: 'app-login-form',
-  template: `
+    selector: 'app-login-form',
+    template: `
     <form
       [formGroup]="loginForm"
       (ngSubmit)="login.emit(loginForm.getRawValue())"
@@ -59,16 +58,16 @@ import { Credentials } from 'src/app/shared/interfaces/credentials';
       </button>
     </form>
   `,
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-  ],
-  styles: [
-    `
+    imports: [
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+    ],
+    styles: [
+        `
       form {
         display: flex;
         flex-direction: column;
@@ -87,7 +86,7 @@ import { Credentials } from 'src/app/shared/interfaces/credentials';
         margin: 1rem 0;
       }
     `,
-  ],
+    ]
 })
 export class LoginFormComponent {
   loginStatus = input.required<ResourceStatus>();

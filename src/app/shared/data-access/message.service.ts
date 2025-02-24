@@ -1,9 +1,14 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { Observable, Subject, defer, exhaustMap } from 'rxjs';
+import { Injectable, computed, effect, inject, signal } from '@angular/core';
+import {
+  rxResource,
+  takeUntilDestroyed,
+  toObservable,
+  toSignal,
+} from '@angular/core/rxjs-interop';
+import { EMPTY, Observable, Subject, defer, exhaustMap } from 'rxjs';
 import { collection, query, orderBy, limit, addDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
-import { filter, map, retry } from 'rxjs/operators';
+import { filter, map, retry, startWith } from 'rxjs/operators';
 
 import { FIRESTORE } from 'src/app/app.config';
 import { Message } from '../interfaces/message';
@@ -20,61 +25,27 @@ interface MessageState {
 export class MessageService {
   private firestore = inject(FIRESTORE);
   private authService = inject(AuthService);
-  private authUser$ = toObservable(this.authService.user);
 
   // sources
-  messages$ = this.getMessages().pipe(
-    // restart stream when user reauthenticates
-    retry({
-      delay: () => this.authUser$.pipe(filter((user) => !!user)),
-    }),
-  );
-  add$ = new Subject<Message['content']>();
-  error$ = new Subject<string>();
-  logout$ = this.authUser$.pipe(filter((user) => !user));
-
-  // state
-  private state = signal<MessageState>({
-    messages: [],
-    error: null,
+  add = signal<Message['content'] | undefined>(undefined, {
+    equal: () => false,
   });
 
-  // selectors
-  messages = computed(() => this.state().messages);
-  error = computed(() => this.state().error);
+  messages = rxResource({
+    request: () => ({ user: this.authService.user() }),
+    loader: () => this.getMessages(),
+  });
+
+  addResource = rxResource({
+    request: () => ({ add: this.add() }),
+    loader: ({ request }) =>
+      request.add ? this.addMessage(request.add) : EMPTY,
+  });
 
   constructor() {
-    // reducers
-    this.messages$.pipe(takeUntilDestroyed()).subscribe((messages) =>
-      this.state.update((state) => ({
-        ...state,
-        messages,
-      })),
-    );
-
-    this.add$
-      .pipe(
-        takeUntilDestroyed(),
-        exhaustMap((message) => this.addMessage(message)),
-      )
-      .subscribe({
-        error: (err) => {
-          console.log(err);
-          this.error$.next('Failed to send message');
-        },
-      });
-
-    this.logout$
-      .pipe(takeUntilDestroyed())
-      .subscribe(() =>
-        this.state.update((state) => ({ ...state, messages: [] })),
-      );
-
-    this.error$
-      .pipe(takeUntilDestroyed())
-      .subscribe((error) =>
-        this.state.update((state) => ({ ...state, error })),
-      );
+    effect(() => {
+      console.log(this.messages.value());
+    });
   }
 
   private getMessages() {

@@ -15,9 +15,8 @@ import { Credentials } from 'src/app/shared/interfaces/credentials';
 import { passwordMatchesValidator } from '../utils/password-matches';
 
 @Component({
-  standalone: true,
-  selector: 'app-register-form',
-  template: `
+    selector: 'app-register-form',
+    template: `
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" #form="ngForm">
       <mat-form-field appearance="fill">
         <mat-label>email</mat-label>
@@ -85,16 +84,16 @@ import { passwordMatchesValidator } from '../utils/password-matches';
       </button>
     </form>
   `,
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-  ],
-  styles: [
-    `
+    imports: [
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+    ],
+    styles: [
+        `
       form {
         display: flex;
         flex-direction: column;
@@ -113,7 +112,7 @@ import { passwordMatchesValidator } from '../utils/password-matches';
         margin: 1rem 0;
       }
     `,
-  ],
+    ]
 })
 export class RegisterFormComponent {
   status = input.required<ResourceStatus>();

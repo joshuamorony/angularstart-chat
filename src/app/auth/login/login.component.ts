@@ -6,9 +6,8 @@ import { AuthService } from 'src/app/shared/data-access/auth.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
-  standalone: true,
-  selector: 'app-login',
-  template: `
+    selector: 'app-login',
+    template: `
     <div class="container gradient-bg">
       @if (authService.user() === null) {
         <app-login-form
@@ -21,16 +20,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
       }
     </div>
   `,
-  providers: [LoginService],
-  imports: [RouterModule, LoginFormComponent, MatProgressSpinnerModule],
-  styles: [
-    `
+    providers: [LoginService],
+    imports: [RouterModule, LoginFormComponent, MatProgressSpinnerModule],
+    styles: [
+        `
       a {
         margin: 2rem;
         color: var(--accent-darker-color);
       }
     `,
-  ],
+    ]
 })
 export default class LoginComponent {
   public loginService = inject(LoginService);
