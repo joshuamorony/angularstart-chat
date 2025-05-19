@@ -22,6 +22,16 @@ $theme: mat.define-theme(
   --white: #ecf0f1;
 }
 
+:root {
+  --primary-color: #{mat.get-theme-color($theme, primary, 70)};
+  --primary-lighter-color: #{mat.get-theme-color($theme, primary, 90)};
+  --primary-darker-color: #{mat.get-theme-color($theme, primary, 50)};
+  --accent-color: #{mat.get-theme-color($theme, primary, 70)};
+  --accent-lighter-color: #{mat.get-theme-color($theme, primary, 90)};
+  --accent-darker-color: #{mat.get-theme-color($theme, primary, 50)};
+  --white: #ecf0f1;
+}
+
 html {
   @include mat.all-component-themes($theme);
 }
