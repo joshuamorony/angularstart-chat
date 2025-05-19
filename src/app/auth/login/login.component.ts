@@ -2,7 +2,7 @@ import { Component, effect, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { LoginFormComponent } from './ui/login-form.component';
 import { LoginService } from './data-access/login.service';
-import { AuthService } from 'src/app/shared/data-access/auth.service';
+import { AuthService } from '../../shared/data-access/auth.service';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
