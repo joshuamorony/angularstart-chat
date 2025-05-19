@@ -7,7 +7,7 @@ import {
 } from 'firebase/auth';
 import { authState } from 'rxfire/auth';
 import { Credentials } from '../interfaces/credentials';
-import { AUTH } from 'src/app/app.config';
+import { AUTH } from '../../app.config';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 export type AuthUser = User | null | undefined;

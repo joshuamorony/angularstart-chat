@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Credentials } from 'src/app/shared/interfaces/credentials';
+import { Credentials } from '../../../shared/interfaces/credentials';
 
 @Component({
   standalone: true,
@@ -42,10 +42,10 @@ import { Credentials } from 'src/app/shared/interfaces/credentials';
         <mat-icon matPrefix>lock</mat-icon>
       </mat-form-field>
 
-      @if (loginStatus() === resourceStatus.Error) {
+      @if (loginStatus() === 'error') {
         <mat-error>Could not log you in with those details.</mat-error>
       }
-      @if (loginStatus() === resourceStatus.Loading) {
+      @if (loginStatus() === 'loading') {
         <mat-spinner diameter="50"></mat-spinner>
       }
 
@@ -53,7 +53,7 @@ import { Credentials } from 'src/app/shared/interfaces/credentials';
         mat-raised-button
         color="accent"
         type="submit"
-        [disabled]="loginStatus() === resourceStatus.Loading"
+        [disabled]="loginStatus() === 'loading'"
       >
         Login
       </button>
@@ -92,7 +92,6 @@ import { Credentials } from 'src/app/shared/interfaces/credentials';
 export class LoginFormComponent {
   loginStatus = input.required<ResourceStatus>();
   login = output<Credentials>();
-  resourceStatus = ResourceStatus;
 
   private fb = inject(FormBuilder);
 

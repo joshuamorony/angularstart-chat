@@ -5,7 +5,7 @@ import { collection, query, orderBy, limit, addDoc } from 'firebase/firestore';
 import { collectionData } from 'rxfire/firestore';
 import { filter, map, retry } from 'rxjs/operators';
 
-import { FIRESTORE } from 'src/app/app.config';
+import { FIRESTORE } from '../../app.config';
 import { Message } from '../interfaces/message';
 import { AuthService } from './auth.service';
 

@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Credentials } from 'src/app/shared/interfaces/credentials';
+import { Credentials } from '../../../shared/interfaces/credentials';
 import { passwordMatchesValidator } from '../utils/password-matches';
 
 @Component({
@@ -69,9 +69,9 @@ import { passwordMatchesValidator } from '../utils/password-matches';
         }
       </mat-form-field>
 
-      @if (status() === resourceStatus.Error) {
+      @if (status() === 'error') {
         <mat-error>Could not create account with those details.</mat-error>
-      } @else if (status() === resourceStatus.Loading) {
+      } @else if (status() === 'loading') {
         <mat-spinner diameter="50"></mat-spinner>
       }
 
@@ -79,7 +79,7 @@ import { passwordMatchesValidator } from '../utils/password-matches';
         mat-raised-button
         color="accent"
         type="submit"
-        [disabled]="status() === resourceStatus.Loading"
+        [disabled]="status() === 'loading'"
       >
         Submit
       </button>
@@ -118,7 +118,6 @@ import { passwordMatchesValidator } from '../utils/password-matches';
 export class RegisterFormComponent {
   status = input.required<ResourceStatus>();
   register = output<Credentials>();
-  resourceStatus = ResourceStatus;
 
   private fb = inject(FormBuilder);
 
